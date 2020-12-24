@@ -1,74 +1,80 @@
-//require('./utils.js');
-const notes = require('./notes.js');
-//const validator = require('validator');
-//const name = 'sathya'
 const chalk = require('chalk')
-const nodemon = require('nodemon')
 const yargs = require('yargs')
+const notes = require('./notes.js')
 
-
-
-//module.exports = add;
-
-/* const command = process.argv[2]
-console.log(process.argv[2]);
-
-if(command === 'add'){
-	console.log('adding note');
-} if(command === 'remove'){
-	console.log('removing note');
-} */
-
-//console.log(process.argv)
-
-//Creating a commands
 
 yargs.command({
-	command: 'add',
+    command: 'add',
+    describe: 'Add a new note',
+    builder: {
+        title: {
+            describe: 'Note title',
+            demandOption: true,
+            type: 'string'
+        },
+        body: {
+            describe: 'Note body',
+            demandOption: true,
+            type: 'string'
+        }
+    },
+    handler(argv) {
+       notes.addNote(argv.title, argv.body)
+    }
+})
 
-	builder:{
-		title: {
-		    //demandOption: true,
+
+yargs.command({
+    command: 'remove',
+    describe: 'Remove a note',
+    builder: {
+    	title: {
+    		describe: 'Note title',
+    		demandOption: true,
+    		type: 'string'
+    	},
+    	body: {
+    		describe: 'Note body',
+      
             type: 'string'
 
-		},
-		body: {
-			describe: 'Note decription',
-			//demandOption: true,
+    	}
+    },
+
+    handler(argv) {
+        notes.removeNote(argv.title, argv.body)
+    }
+})
+
+
+yargs.command({
+    command: 'list',
+    describe: 'List your notes',
+    handler(argv) {
+         notes.listNotes(argv.title, argv.body)
+    }
+})
+
+
+yargs.command({
+    command: 'read',
+    describe: 'Read a note',
+    builder: {
+    	title: {
+    		describe: 'Note title',
+    		demandOption: true,
+    		type: 'string'
+    	},
+    	body: {
+    		describe: 'Note body',
+      
             type: 'string'
-		}
-	},
-	handler: function (argv){
-		notes.addNote(argv.title, argv.body)
-	}
+
+    	}
+    },
+    handler(argv) {
+        notes.readNote(argv.title)
+    }
 })
 
-/*yargs.command({
-	command: 'remove',
-	describe: 'Remove the note',
-	handler: function(){
-		console.log("Removing the note")
-	}
-
-})
-
-yargs.command({
-	command: 'read',
-	describe: 'Read a note',
-	handler: function(){
-		console.log("reading a note")
-	}
-})
-
-yargs.command({
-	command: 'list',
-	describe: 'listing notes',
-	handler: function(){
-		console.log("Listing all notes")
-	}
-
-})
-
-
-console.log(yargs.argv)*/
-yargs.parse();
+yargs.parse()
