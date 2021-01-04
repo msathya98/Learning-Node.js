@@ -3,6 +3,9 @@ const path = require('path');
 const hbs = require('hbs');
 const forecast = require('./utils/forecast');
 const geocode = require('./utils/geocode');
+const request = require('request');
+
+
 const app = express()
 
 const Path1 = path.join(__dirname, '/public')
@@ -19,15 +22,15 @@ app.use(express.static(Path1));
 
 app.get('', (req, res) => {
 	res.render("index", {
-		title: 'Home',
-		name: 'sathya'
+		title: 'Weather',
+		name: 'Sathya'
 	})
 })
 
 app.get('/help', (req, res) => {
 	res.render("help", {
 		title: 'Help',
-	    name: 'sathya'
+	    name: 'Sathya'
 	})
 })
 
@@ -35,7 +38,7 @@ app.get('/about', (req, res) => {
 	res.render("about", {
 		title: 'About',
 	
-	 name: 'sathya'
+	 name: 'Sathya'
 	})
 })
 
@@ -46,14 +49,29 @@ app.get('/weather', (req, res) => {
 		})
 	}
 
+   geocode(req.query.address, (error, {latitude, longitude, location} = {}) => {
+   	if(error){
+   		return res.send({error});
+   	}
 
-	res.send({
+   	 forecast(latitude, longitude, (error, forecastData) => {
+   	 	if(error) {
+   	 		return res.send({error})
+
+   	 	}
+
+   	 	res.send({
+   	 		forecast: forecastData, location,
+   	 		address: req.query.address
+   	 	})
+   	 })
+	/*res.send({
 		address: response.body.features[0].place_name,
 		temp: 30
 
+	})*/
 	})
-	}
-)
+})
 
 app.get('/products', (req, res) => {
 	if(!req.query.search){
@@ -61,23 +79,23 @@ app.get('/products', (req, res) => {
 			error: "You must provide a search option"
 		})
 	}
-	console.log(req.query.search)
-	res.send({
+	
+	res.render({
 		products: []
 	})
 })
 
 app.get('/help/*', (req, res) => {
 	res.render("404",{
-		message1: "help article not found",
-		name: 'sathya'
+		message1: "Help article not found",
+		name: 'Sathya'
 	})
 })
 
 app.get('*', (req, res) => {
 	res.render("404",{
 		message1: "404 error page not found",
-		name: 'sathya'
+		name: 'Sathya'
 	})
 })
 
